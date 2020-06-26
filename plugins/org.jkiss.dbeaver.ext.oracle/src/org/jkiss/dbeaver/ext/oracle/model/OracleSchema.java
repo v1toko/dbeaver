@@ -456,11 +456,11 @@ public class OracleSchema extends OracleGlobalObject implements DBSSchema, DBPRe
             return;
         }
         try (JDBCSession session = DBUtils.openMetaSession(monitor, this, "Load table status")) {
-            boolean hasDBA = getDataSource().isViewAvailable(monitor, OracleConstants.SCHEMA_SYS, "DBA_SEGMENTS");
+            boolean hasDBA = getDataSource().isViewAvailable(monitor, OracleConstants.SCHEMA_SYS, "DBA_SEGMENTS"); 
             try (JDBCPreparedStatement dbStat = session.prepareStatement(
                 "SELECT SEGMENT_NAME,SUM(bytes) TABLE_SIZE\n" +
                     "FROM " + OracleUtils.getSysSchemaPrefix(getDataSource()) + (hasDBA ? "DBA_SEGMENTS" : "USER_SEGMENTS") + " s\n" +
-                    "WHERE S.SEGMENT_TYPE='TABLE' AND s.OWNER = ?\n" +
+                    "WHERE S.SEGMENT_TYPE='TABLE' AND " + (hasDBA ? "s.OWNER" : "s.SEGMENT_NAME") + " = ?\n" +
                     "GROUP BY SEGMENT_NAME"))
             {
                 dbStat.setString(1, getName());

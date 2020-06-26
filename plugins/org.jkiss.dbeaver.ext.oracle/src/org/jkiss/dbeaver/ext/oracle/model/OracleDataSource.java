@@ -749,7 +749,7 @@ public class OracleDataSource extends JDBCDataSource implements DBAUserCredentia
 
     @Override
     public void collectObjectStatistics(DBRProgressMonitor monitor, boolean totalSizeOnly, boolean forceRefresh) throws DBException {
-        if (hasStatistics && !forceRefresh) {
+        if ((hasStatistics && !forceRefresh) || !this.isAdmin()) {
             return;
         }
         try (final JDBCSession session = DBUtils.openMetaSession(monitor, this, "Load tablespace '" + getName() + "' statistics")) {
